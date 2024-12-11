@@ -1,9 +1,10 @@
-import CurrencyInputForm from '@/components/CurrencyInputForm'
+import Chat from "@/components/Chat"
+
 
 const Home = () => {
   return (
     <div>
-        <CurrencyInputForm />
+      <Chat />
     </div>
   )
 }

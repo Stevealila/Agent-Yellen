@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@langchain/community": "^0.3.17",
+    "@langchain/core": "^0.3.23",
+    "@langchain/groq": "^0.1.2",
+    "ai": "^4.0.14",
+    "cheerio": "^1.0.0",
+    "langchain": "^0.3.6",
     "next": "15.1.0",
     "puppeteer": "^23.10.3",
     "react": "^19.0.0",
