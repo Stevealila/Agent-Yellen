@@ -1,4 +1,4 @@
-import { retrieveDocumentsFromScrapedUrls } from '@/actions/RAG'
+import { retrieveDocumentsFromScrapedUrls } from '@/utils/RAG'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatGroq } from '@langchain/groq'
@@ -22,9 +22,7 @@ export const POST = async (req: Request) => {
         Avoid adding external information and answer based strictly on the context.
         Be friendly, straightforward, and helpful without being verbose.
 
-        Context:
-        ${context}
-
+        Context: {context}
         Current conversation: {chat_history}
         User: {input}`
     )
@@ -35,7 +33,9 @@ export const POST = async (req: Request) => {
     const chain = prompt.pipe(model).pipe(parser)
 
     // generate an answer
-    const stream = await chain.stream({ chat_history: messages.slice(-5), input: lastMessage })
+    const stream = await chain.stream({ context, chat_history: messages.slice(-10), input: lastMessage })
+
+    console.log("\n..........................chat_history.......................\n\n", messages)
 
     return LangChainAdapter.toDataStreamResponse(stream)
 }
