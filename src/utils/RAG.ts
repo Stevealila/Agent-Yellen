@@ -15,8 +15,14 @@ export const retrieveDocumentsFromScrapedUrls = async () => {
     const loadedDocs = await Promise.all(urls.map(url => new CheerioWebBaseLoader(url).load()))
     const docs = loadedDocs.flat()
 
+    /* IMPROVEMENTS?
+        1. EDGE CASES: failed to get content from url(s) 
+        2. REMOVE UNNECESSARIES: scripts, css, footer, ads
+        3. INCLUDE METADATA i.e source in each document
+    */
+
     // split and 
-    const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 500, chunkOverlap: 50 })
+    const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 800, chunkOverlap: 100 })
     const docSplits = await splitter.splitDocuments(docs)
 
     // store content in a vector store

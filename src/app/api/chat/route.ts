@@ -1,10 +1,14 @@
 import { retrieveDocumentsFromScrapedUrls } from '@/utils/RAG'
+// import { saveTodayNewsLinks } from '@/utils/scrape'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatGroq } from '@langchain/groq'
 import { LangChainAdapter } from 'ai'
 
 export const maxDuration = 30
+
+// const scrapedUrls = await saveTodayNewsLinks()
+// console.log(scrapedUrls)
 
 export const POST = async (req: Request) => {
     const { messages } = await req.json()
