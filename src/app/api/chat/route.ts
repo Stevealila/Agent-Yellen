@@ -1,4 +1,4 @@
-import { retrieveDocumentsFromScrapedUrls } from '@/utils/RAG'
+import { createRetriever } from '@/utils/agent/helpers/retriever'
 // import { saveTodayNewsLinks } from '@/utils/scrape'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
@@ -15,7 +15,7 @@ export const POST = async (req: Request) => {
     const lastMessage = messages.at(-1).content
 
     // retrieve context
-    const retriever = await retrieveDocumentsFromScrapedUrls()
+    const retriever = await createRetriever()
     const docs = await retriever.invoke(lastMessage)
     const context = docs.map(doc => `content: ${doc.pageContent}\nsource: ${doc.metadata.source}`).join("\n\n")
 

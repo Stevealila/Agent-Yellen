@@ -2,13 +2,13 @@
 import { ChatGroq } from "@langchain/groq"
 import { Annotation, END, MessagesAnnotation, START, StateGraph } from "@langchain/langgraph"
 import { ToolNode } from "@langchain/langgraph/prebuilt"
-import { fileContentChecker } from "./tools"
+import { scrapedURLContentReader, fileContentChecker } from "./tools"
 
 export const createGraph = async () => {
 
     // bind tools to the LLM
 
-    const tools = [fileContentChecker]
+    const tools = [fileContentChecker, scrapedURLContentReader]
     const toolNode = new ToolNode(tools)
     const model = new ChatGroq({ model: 'gemma2-9b-it', temperature: 0 }).bindTools(tools)
 
@@ -50,10 +50,3 @@ export const createGraph = async () => {
 
     return graph
 }
-
-/* NEXT: 
-
-https://js.langchain.com/docs/tutorials/qa_chat_history/
-https://langchain-ai.github.io/langgraphjs/tutorials/multi_agent/agent_supervisor/
-
-*/
