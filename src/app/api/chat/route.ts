@@ -32,7 +32,7 @@ export const POST = async (req: Request) => {
     )
 
     // create a chain
-    const model = new ChatGroq({ model: 'gemma2-9b-it', temperature: 0 });
+    const model = new ChatGroq({ model: 'gemma2-9b-it', temperature: 0 })
     const parser = new StringOutputParser()
     const chain = prompt.pipe(model).pipe(parser)
 
