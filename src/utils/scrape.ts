@@ -8,12 +8,13 @@ export const saveTodayNewsLinks = async (): Promise<string[]> => {
         // Open or use an existing headless browser instance then visit the news page.
         if (!browser) browser = await puppeteer.launch()
         const page = await browser.newPage()
-        await page.goto("https://fxstreet.com/news", { waitUntil: "domcontentloaded" })
+        // await page.goto("https://fxstreet.com/news", { waitUntil: "domcontentloaded" })
+        await page.goto("https://fxstreet.com/news?q=USDCAD")
 
-        // Scrape all links of headlines posted today
+        // Scrape all links posted today
         const allLinks: string[] = []
         const today = new Date()
-        const todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`
+        const todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${(today.getDate()-1).toString().padStart(2, "0")}`
         let hasMorePages = true
 
         while (hasMorePages) {
