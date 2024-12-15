@@ -1,23 +1,15 @@
-import { createRetriever } from '@/utils/agent/helpers/retriever'
-// import { saveTodayNewsLinks } from '@/utils/scrape'
+import { ChatGroq } from '@langchain/groq'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
-import { ChatGroq } from '@langchain/groq'
+import { HumanMessage } from '@langchain/core/messages'
+import { createGraph } from '@/utils/graph'
 import { LangChainAdapter } from 'ai'
 
 export const maxDuration = 30
 
-// const scrapedUrls = await saveTodayNewsLinks()
-// console.log(scrapedUrls)
-
 export const POST = async (req: Request) => {
     const { messages } = await req.json()
     const lastMessage = messages.at(-1).content
-
-    // retrieve context
-    const retriever = await createRetriever()
-    const docs = await retriever.invoke(lastMessage)
-    const context = docs.map(doc => `content: ${doc.pageContent}\nsource: ${doc.metadata.source}`).join("\n\n")
 
     // guide the conversation
     const prompt = ChatPromptTemplate.fromTemplate(
@@ -36,10 +28,14 @@ export const POST = async (req: Request) => {
     const parser = new StringOutputParser()
     const chain = prompt.pipe(model).pipe(parser)
 
-    // generate an answer
-    const stream = await chain.stream({ context, chat_history: messages.slice(-10), input: lastMessage })
+    // generate an answer - context from graph
+    /**/
+    const graph = await createGraph()
+    const g_req = await graph.invoke({ messages: lastMessage as HumanMessage })
+    const context = g_req.messages[g_req.messages.length - 1].content
+    /**/
 
-    console.log("\n..........................chat_history.......................\n\n", messages)
+    const stream = await chain.stream({ context, chat_history: messages.slice(-10), input: lastMessage })
 
     return LangChainAdapter.toDataStreamResponse(stream)
 }
