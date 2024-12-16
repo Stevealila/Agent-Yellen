@@ -12,7 +12,7 @@ export const scrapeURLs = async () => {
         await page.waitForSelector("h4.fxs_headline_tiny a")
 
         const d = new Date()
-        const todayDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()-2}`
+        const todayDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`
 
         const urls = await page.evaluate(todayDate => {
             const pDates = document.querySelectorAll<HTMLTimeElement>(".fxs_entry_metaInfo time")

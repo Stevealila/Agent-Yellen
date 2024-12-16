@@ -13,9 +13,9 @@ export const createGraph = async () => {
     
     // create tools
 
-    const flStatsTool = tool(getflStats, 
+    const getFileStatsTool = tool(getflStats, 
         {
-            name: "flStatsTool",
+            name: "getFileStatsTool",
             description: "Check status of file containing scraped urls."
         }
     )
@@ -27,14 +27,14 @@ export const createGraph = async () => {
         }
     )
     
-    const docsRetrieverTool = createRetrieverTool(retriever, 
+    const retrieveDocsTool = createRetrieverTool(retriever, 
         {
-            name: "docsRetrieverTool",
+            name: "retrieveDocsTool",
             description: "Retrieve documents stored in vector store."
         }
     )
 
-    const tools = [flStatsTool, scrapeURLsTool, docsRetrieverTool]
+    const tools = [getFileStatsTool, scrapeURLsTool, retrieveDocsTool]
     const llm = new ChatGroq({ model: "gemma2-9b-it" }).bindTools(tools)
 
 
@@ -63,10 +63,10 @@ export const createGraph = async () => {
     const toolNode = new ToolNode(tools)
 
     const graph = new StateGraph(GraphState)
-            .addNode("agent79", callModel)
+            .addNode("agentYellen", callModel)
             .addNode("tools", toolNode)
-            .addEdge("__start__", "agent79")
-            .addConditionalEdges("agent79", shouldContinue)
+            .addEdge("__start__", "agentYellen")
+            .addConditionalEdges("agentYellen", shouldContinue)
             .compile()
 
     return graph
