@@ -2,8 +2,9 @@ import { ChatGroq } from '@langchain/groq'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { HumanMessage } from '@langchain/core/messages'
-import { createGraph } from '@/utils/graph'
+
 import { LangChainAdapter } from 'ai'
+import { graph } from '@/agent/graph'
 
 export const maxDuration = 30
 
@@ -30,7 +31,6 @@ export const POST = async (req: Request) => {
 
     // generate an answer - context from graph
     /**/
-    const graph = await createGraph()
     const g_req = await graph.invoke({ messages: lastMessage as HumanMessage })
     const context = g_req.messages[g_req.messages.length - 1].content
     /**/
