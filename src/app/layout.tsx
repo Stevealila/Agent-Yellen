@@ -3,8 +3,8 @@ import "./global.css"
 
 const RootLayout = ({ children }:{ children: React.ReactNode }) => {
   return (
-    <html lang="en">
-    <body className="bg-gray-200">
+    <html lang="en" data-theme="dark">
+    <body>
         {children}
     </body>
     </html>

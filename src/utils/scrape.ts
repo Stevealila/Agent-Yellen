@@ -85,7 +85,7 @@ const scrapeURLs = async (): Promise<string[]> => {
     } catch (error) {
         console.log("---SCRAPING ERROR---")
         console.error(error)
-        return [] // Return empty array instead of error string
+        return []
     } finally {
         await browser?.close()
         await browser?.disconnect()

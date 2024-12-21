@@ -9,7 +9,8 @@ import { graph } from '@/agent/graph'
 export const maxDuration = 30
 
 export const POST = async (req: Request) => {
-    const { messages } = await req.json()
+    const { messages, currency } = await req.json()
+    
     const lastMessage = messages.at(-1).content
 
     // guide the conversation
