@@ -1,22 +1,24 @@
 import { createRetrieverTool } from "langchain/tools/retriever"
-import { ToolNode } from "@langchain/langgraph/prebuilt"
-import { GraphState } from "./state"
 import { tool } from "@langchain/core/tools"
 import { checkAndScrapeURLs } from "@/utils/scrape"
 import { retrieveDocuments } from "./retriever"
 
-const urls = await checkAndScrapeURLs()
-const retriever = await retrieveDocuments(urls)
+export const createTools = async (currency: string) => {
 
-const checkAndScrapeTool = tool(checkAndScrapeURLs, {
-    name: "checkAndScrapeTool",
-    description: "Check for existing URLs and automatically scrape new ones if needed."
-})
+    const urls = await checkAndScrapeURLs(currency)
+    const retriever = await retrieveDocuments(urls)
+    
+    const checkAndScrapeTool = tool(checkAndScrapeURLs, {
+        name: "checkAndScrapeTool",
+        description: "Check for existing URLs and automatically scrape new ones if needed."
+    })
+    
+    const retrieveDocsTool = createRetrieverTool(retriever, {
+        name: "retrieveDocsTool",
+        description: "Retrieve documents stored in vector store."
+    })
 
-const retrieveDocsTool = createRetrieverTool(retriever, {
-    name: "retrieveDocsTool",
-    description: "Retrieve documents stored in vector store."
-})
+    const tools = [checkAndScrapeTool, retrieveDocsTool]
 
-export const tools = [checkAndScrapeTool, retrieveDocsTool]
-export const toolNode = new ToolNode<typeof GraphState.State>(tools)
+    return tools 
+}

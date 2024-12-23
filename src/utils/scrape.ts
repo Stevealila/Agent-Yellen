@@ -9,35 +9,35 @@ const getTodayDate = () => {
 }
 
 
-export const checkAndScrapeURLs = async (): Promise<string[]> => {
+export const checkAndScrapeURLs = async (currency: string): Promise<string[]> => {
     console.log("---CHECK EXISTING URLS---")
-    const filePath = path.join(process.cwd(), "scrapedURLs.txt")
+    const todayDate = getTodayDate()
+    const filePath = path.join(process.cwd(), `scrapedURLs/${currency}_${todayDate}.txt`)
 
     try {
         // Check if file exists and has content
         const fileExists = await fs.access(filePath).then(() => true).catch(() => false)
         if (!fileExists) {
             console.log("---NO URL FILE FOUND - SCRAPING NEW URLS---")
-            return await scrapeURLs()
+            return await scrapeURLs(currency)
         }
 
         const stats = await fs.stat(filePath)
         if (!stats.size) {
             console.log("---EMPTY URL FILE - SCRAPING NEW URLS---")
-            return await scrapeURLs()
+            return await scrapeURLs(currency)
         }
 
         // Check if URLs are from today
         const fLines = await fs.readFile(filePath, "utf-8")
         const urls = fLines.split("\n").filter(line => line !== "")
 
-        const todayDate = getTodayDate()
         console.log("Checking URLs against date:", todayDate)
         const hasCurrentUrls = urls.some(url => url.includes(todayDate))
 
         if (!hasCurrentUrls) {
             console.log("---URLS OUTDATED - SCRAPING NEW URLS---")
-            return await scrapeURLs()
+            return await scrapeURLs(currency)
         }
 
         console.log("---USING EXISTING URLS---")
@@ -45,19 +45,19 @@ export const checkAndScrapeURLs = async (): Promise<string[]> => {
         return urls
     } catch {
         console.log("---ERROR CHECKING URLS - SCRAPING NEW URLS---")
-        return await scrapeURLs()
+        return await scrapeURLs(currency)
     }
 }
 
 
 
-const scrapeURLs = async (): Promise<string[]> => {
+const scrapeURLs = async (currency: string): Promise<string[]> => {
     console.log("---SCRAPING NEWS URLS---")
     let browser
     try {
         browser = await puppeteer.launch()
         const page = await browser.newPage()
-        await page.goto("https://www.fxstreet.com/news?q=USDCAD")
+        await page.goto(`https://www.fxstreet.com/news?q=${currency}`)
         await page.waitForSelector("h4.fxs_headline_tiny a")
 
         const todayDate = getTodayDate()
@@ -77,7 +77,7 @@ const scrapeURLs = async (): Promise<string[]> => {
         }, todayDate)
 
         // Save new URLs
-        const saveflPath = path.join(process.cwd(), "scrapedURLs.txt")
+        const saveflPath = path.join(process.cwd(), `scrapedURLs/${currency}_${todayDate}.txt`)
         await fs.writeFile(saveflPath, urls.join("\n"), 'utf-8')
         console.log(`---SCRAPING COMPLETED - ${urls.length} URLS SAVED---`)
 
